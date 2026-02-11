@@ -3,6 +3,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import User from './models/User.js';
@@ -30,6 +31,7 @@ const io = new Server(server, {
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join('uploads')));
 
 // Routes
 app.use('/api/users', userRoutes);
@@ -247,6 +249,89 @@ io.on('connection', (socket) => {
       }
     }
   });
+
+  // WebRTC Voice Call Events
+  socket.on('voice_call_request', (data) => {
+    // Forward call request to target user in chat
+    const targetUsers = getChatParticipants(data.chatId, socket.userId);
+    targetUsers.forEach(userId => {
+      io.to(userId).emit('voice_call_request', {
+        ...data,
+        from: socket.userId
+      });
+    });
+  });
+
+  socket.on('voice_call_answered', (data) => {
+    // Forward call answer to caller
+    io.to(data.to).emit('voice_call_answered', {
+      ...data,
+      from: socket.userId
+    });
+  });
+
+  socket.on('voice_call_rejected', (data) => {
+    // Forward call rejection to caller
+    io.to(data.to).emit('voice_call_rejected', {
+      ...data,
+      from: socket.userId
+    });
+  });
+
+  socket.on('voice_call_ended', (data) => {
+    // Notify all participants in chat that call ended
+    const participants = getChatParticipants(data.chatId, socket.userId);
+    participants.forEach(userId => {
+      io.to(userId).emit('voice_call_ended', {
+        ...data,
+        from: socket.userId
+      });
+    });
+  });
+
+  socket.on('offer', (data) => {
+    // Forward WebRTC offer to target user
+    io.to(data.to).emit('offer', {
+      ...data,
+      from: socket.userId
+    });
+  });
+
+  socket.on('answer', (data) => {
+    // Forward WebRTC answer to target user
+    io.to(data.to).emit('answer', {
+      ...data,
+      from: socket.userId
+    });
+  });
+
+  socket.on('ice_candidate', (data) => {
+    // Forward ICE candidate to target user
+    const participants = getChatParticipants(data.chatId, socket.userId);
+    participants.forEach(userId => {
+      if (userId !== socket.userId) {
+        io.to(userId).emit('ice_candidate', {
+          ...data,
+          from: socket.userId
+        });
+      }
+    });
+  });
+
+  // Helper function to get chat participants
+  async function getChatParticipants(chatId, currentUserId) {
+    try {
+      const chat = await Chat.findById(chatId);
+      if (chat) {
+        return chat.participants
+          .filter(p => p.toString() !== currentUserId)
+          .map(p => p.toString());
+      }
+    } catch (error) {
+      console.error('Error getting chat participants:', error);
+    }
+    return [];
+  }
 });
 
 // Start server

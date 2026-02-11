@@ -42,6 +42,20 @@ function App() {
     socket.emit('join', userData._id);
   };
 
+  const handleAccountSwitch = (accountData) => {
+    // Disconnect current socket connection
+    socket.disconnect();
+    
+    // Switch to new account
+    setUser(accountData.user);
+    setToken(accountData.token);
+    localStorage.setItem('token', accountData.token);
+    
+    // Reconnect with new user
+    socket.connect();
+    socket.emit('join', accountData.user._id);
+  };
+
   const handleLogout = () => {
     setUser(null);
     setToken(null);
@@ -59,7 +73,7 @@ function App() {
           />
           <Route 
             path="/chat" 
-            element={user ? <Chat user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} 
+            element={user ? <Chat user={user} onLogout={handleAccountSwitch} /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/" 
