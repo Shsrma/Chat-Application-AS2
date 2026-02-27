@@ -1,42 +1,52 @@
 import mongoose from 'mongoose';
 
-const chatSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    trim: true,
-    default: ''
-  },
-  isGroupChat: {
-    type: Boolean,
-    default: false
-  },
-  participants: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }],
-  admin: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
-  lastMessage: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Message'
-  },
-  unreadCounts: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
+const chatSchema = new mongoose.Schema(
+  {
+    chatName: {
+      type: String,
+      trim: true,
     },
-    count: {
-      type: Number,
-      default: 0
-    }
-  }]
-}, {
-  timestamps: true
-});
+    isGroupChat: {
+      type: Boolean,
+      default: false,
+    },
+    isChannel: {
+      type: Boolean, // For discord-like channels
+      default: false,
+    },
+    participants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    admins: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    lastMessage: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Message',
+    },
+    groupAvatar: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+    pinnedMessages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Message',
+      }
+    ]
+  },
+  {
+    timestamps: true,
+  }
+);
 
-// Index for efficient queries
-chatSchema.index({ participants: 1 });
-
-export default mongoose.model('Chat', chatSchema);
+const Chat = mongoose.model('Chat', chatSchema);
+export default Chat;

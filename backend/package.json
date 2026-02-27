@@ -9,19 +9,34 @@
     "dev": "nodemon server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^8.0.3",
-    "socket.io": "^4.7.4",
-    "cors": "^2.8.5",
+    "@socket.io/redis-adapter": "^8.3.0",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "multer": "^1.4.5-lts.1"
+    "express": "^4.18.2",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.9.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.3",
+    "multer": "^1.4.5-lts.1",
+    "qrcode": "^1.5.4",
+    "redis": "^5.11.0",
+    "socket.io": "^4.7.4",
+    "speakeasy": "^2.0.0",
+    "winston": "^3.19.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
   },
-  "keywords": ["chat", "socket.io", "express", "mongodb"],
+  "keywords": [
+    "chat",
+    "socket.io",
+    "express",
+    "mongodb"
+  ],
   "author": "",
   "license": "MIT"
 }
