@@ -31,7 +31,7 @@ const server = http.createServer(app);
 // Middleware
 app.use(helmet()); // Security headers
 app.use(cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // Vite default
+    origin: [process.env.CLIENT_URL, "http://localhost:5173"], // Vite default
     credentials: true, // Allow cookies
 }));
 app.use(express.json());

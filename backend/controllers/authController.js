@@ -15,6 +15,7 @@ import logger from '../config/logger.js';
  */
 export const registerUser = catchAsync(async (req, res, next) => {
   const { username, email, password } = req.body;
+  console.log('Registering user with email:', email);
 
   const userExists = await User.findOne({ $or: [{ email }, { username }] });
   if (userExists) {
@@ -39,6 +40,7 @@ export const registerUser = catchAsync(async (req, res, next) => {
  */
 export const loginUser = catchAsync(async (req, res, next) => {
   const { email, password, deviceIdentifier = 'unknown', deviceType, os, browser } = req.body;
+  console.log('Login attempt for email:', email);
 
   const user = await User.findOne({ email }).select('+password +twoFactorSecret');
 
