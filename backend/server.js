@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+dotenv.config();
 
 import connectDB from './config/db.js';
 import logger from './config/logger.js';
@@ -19,7 +20,7 @@ import messageRoutes from './routes/messageRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 
 // Load env
-dotenv.config();
+
 
 // Connect DB
 connectDB();
