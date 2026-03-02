@@ -8,7 +8,7 @@ import express from 'express';
 const router = express.Router();
 
 // Public routes
-router.post('/register', authLimiter, authController.registerUser);
+router.post('/register',  authController.registerUser);
 router.post('/login', authLimiter, authController.loginUser);
 router.post('/verify-2fa', authLimiter, validate(verify2FASchema), authController.verify2FA);
 router.post('/refresh-token', authController.refreshToken); // Uses HTTP-only cookie automatically
